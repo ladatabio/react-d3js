@@ -1,0 +1,79 @@
+{
+  "coverage": "0%",
+  "expectCount": 30,
+  "actualCount": 0,
+  "files": {
+    "src/components/Animate.jsx": {
+      "expectCount": 12,
+      "actualCount": 0,
+      "undocumentLines": [
+        9,
+        53,
+        26,
+        99,
+        34,
+        42,
+        18,
+        22,
+        11,
+        108,
+        38,
+        13
+      ]
+    },
+    "src/components/Circles.jsx": {
+      "expectCount": 3,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        6,
+        14
+      ]
+    },
+    "src/components/Ellipses.jsx": {
+      "expectCount": 3,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        6,
+        11
+      ]
+    },
+    "src/components/Lines.jsx": {
+      "expectCount": 3,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        6,
+        11
+      ]
+    },
+    "src/components/Paths.jsx": {
+      "expectCount": 3,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        6,
+        11
+      ]
+    },
+    "src/components/Rectangles.jsx": {
+      "expectCount": 3,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        6,
+        11
+      ]
+    },
+    "src/components/Texts.jsx": {
+      "expectCount": 3,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        6,
+        11
+      ]
+    }
+  }
+}

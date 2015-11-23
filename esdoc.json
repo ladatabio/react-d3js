@@ -1,0 +1,23 @@
+{
+  "title": "reactD3 components",
+  "source": "./src",
+  "destination": "./esdoc",
+  "includes": ["\\.(js|jsx|es6)$"],
+  "access": ["public", "protected", "private"],
+  "autoPrivate": true,
+  "unexportIdentifier": true,
+  "undocumentIdentifier": true,
+  "builtinExternal": true,
+  "index": "./README.md",
+  "package": "./package.json",
+  "coverage": true,
+  "includeSource": true,
+  "manual": {
+      "overview": "./manual/overview.md",
+      "installation": "./manual/installation.md",
+      "usage": "./manual/usage.md",
+      "examples": "./manual/examples.md",
+      "faq": "./manual/faq.md",
+      "changelog": "./CHANGELOG.md"
+  }
+}

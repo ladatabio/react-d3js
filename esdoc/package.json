@@ -1,0 +1,34 @@
+{
+  "name": "reactD3",
+  "version": "0.1.0",
+  "description": "",
+  "main": "lib/index.js",
+  "dependencies": {
+      "d3": "^3.5.6",
+      "react": "^0.13.3"
+  },
+  "devDependencies": {
+    "babel": "^5.8.23",
+    "babel-core": "^5.8.25",
+    "babel-jest": "^5.3.0",
+    "babel-loader": "^5.3.2",
+    "d3": "^3.5.6",
+    "eslint": "^1.5.1",
+    "extract-text-webpack-plugin": "^0.8.2",
+    "file-loader": "^0.8.4",
+    "json-loader": "^0.5.3",
+    "jsx-loader": "^0.13.2",
+    "react": "^0.13.3",
+    "react-hot-loader": "^1.3.0",
+    "react-utils": "^1.0.0",
+    "webpack": "^1.12.2",
+    "webpack-dev-server": "^1.11.0"
+  },
+  "scripts": {
+    "compile": "babel -d lib/ src/",
+    "PieChart": "webpack-dev-server examples/PieChart.jsx",
+    "Bubbles": "webpack-dev-server examples/Bubbles.jsx"
+  },
+  "author": "Guillaume Mousnier",
+  "license": "ISC"
+}

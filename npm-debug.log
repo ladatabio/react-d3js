@@ -1,0 +1,37 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'run', 'PieChart' ]
+2 info using npm@2.14.3
+3 info using node@v5.0.0
+4 verbose run-script [ 'prePieChart', 'PieChart', 'postPieChart' ]
+5 info prePieChart SVGsForReact@0.1.0
+6 info PieChart SVGsForReact@0.1.0
+7 verbose unsafe-perm in lifecycle true
+8 info SVGsForReact@0.1.0 Failed to exec PieChart script
+9 verbose stack Error: SVGsForReact@0.1.0 PieChart: `webpack-dev-server examples/PieChart.jsx`
+9 verbose stack spawn ENOENT
+9 verbose stack     at ChildProcess.<anonymous> (/usr/lib/node_modules/npm/lib/utils/spawn.js:17:16)
+9 verbose stack     at emitTwo (events.js:87:13)
+9 verbose stack     at ChildProcess.emit (events.js:172:7)
+9 verbose stack     at maybeClose (internal/child_process.js:818:16)
+9 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+10 verbose pkgid SVGsForReact@0.1.0
+11 verbose cwd /home/gmr/projects/SVGsForReact
+12 error Linux 4.3.0-1-MANJARO
+13 error argv "/usr/bin/node" "/usr/bin/npm" "run" "PieChart"
+14 error node v5.0.0
+15 error npm  v2.14.3
+16 error file sh
+17 error code ELIFECYCLE
+18 error errno ENOENT
+19 error syscall spawn
+20 error SVGsForReact@0.1.0 PieChart: `webpack-dev-server examples/PieChart.jsx`
+20 error spawn ENOENT
+21 error Failed at the SVGsForReact@0.1.0 PieChart script 'webpack-dev-server examples/PieChart.jsx'.
+21 error This is most likely a problem with the SVGsForReact package,
+21 error not with npm itself.
+21 error Tell the author that this fails on your system:
+21 error     webpack-dev-server examples/PieChart.jsx
+21 error You can get their info via:
+21 error     npm owner ls SVGsForReact
+21 error There is likely additional logging output above.
+22 verbose exit [ 1, true ]
