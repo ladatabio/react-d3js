@@ -1,6 +1,6 @@
 import React from 'react';
 import d3 from 'd3';
-import { Paths, Animate } from '../lib/index.js';
+import { Paths, Animate } from '../src/index.js';
 
 let myAnimation = {
     duration: 400,

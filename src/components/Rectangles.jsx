@@ -7,6 +7,7 @@ class Rectangles extends React.Component {
         super();
         this.attributes = {
             text: 0,
+            fill: 'black',
             x: 0,
             y: 0,
             rx: 0,
@@ -18,7 +19,7 @@ class Rectangles extends React.Component {
             transform: ''
         };
 
-        this.childrensTagName = 'Rectangle';
+        this.childrensTagName = 'Rect';
     }
 
     render() {

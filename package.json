@@ -8,6 +8,7 @@
     "prepublish": "npm run compile",
     "PieChart": "webpack-dev-server examples/PieChart.jsx",
     "Bubbles": "webpack-dev-server examples/Bubbles.jsx",
+    "Rectangles": "webpack-dev-server examples/Rectangles.jsx",
     "BarChart": "webpack-dev-server examples/BarChart.jsx",
     "test": "jest"
   },
