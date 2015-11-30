@@ -1,6 +1,6 @@
 import React from 'react';
 import d3 from 'd3';
-import { Rectangles, Animate } from '../lib/index.js';
+import { Rectangles, Animate } from '../src/index.js';
 
 export class BarChart extends React.Component {
 
@@ -15,6 +15,7 @@ export class BarChart extends React.Component {
 
     render() {
         return <svg width={this.state.width} height={this.state.height}>
+            <Rectangles attrs={[{}]}/>
         </svg>
     }
 

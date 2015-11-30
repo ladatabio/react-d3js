@@ -1,7 +1,7 @@
 import SVGSkeleton from './SVGSkeleton';
-import { Component } from 'react';
+import React from 'react';
 
-class Lines extends Component {
+class Lines extends React.Component {
 
     constructor() {
         super();
