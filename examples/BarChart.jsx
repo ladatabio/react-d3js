@@ -1,9 +1,6 @@
 import React from 'react';
-import d3 from 'd3';
+import ReactDOM from 'react-dom';
 import { BarChart } from '../src/index.js';
-
-let data = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
-    11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
 
 export class BarChartExample extends React.Component {
 
@@ -12,16 +9,31 @@ export class BarChartExample extends React.Component {
         this.state = {
             width: 300,
             height: 300,
-            margin: 30
+            margin: 30,
+            data: [ 5, 10, 13, 58, 21, 25, 22, 18, 15, 13, 11, 12]
         }
     }
 
+    _generateRandomData() {
+        let arr = [];
+        for (let i=0, t=Math.round(Math.random()*20 +1 ); i<t; i++) {
+            arr.push(Math.round(Math.random() * t))
+        }
+
+        this.setState({
+            data: arr
+        })
+    }
+
     render() {
-        return <svg width={this.state.width} height={this.state.height}>
-            <BarChart/>
-        </svg>
+        return (
+            <div style={{display: 'flex', flexDirection: 'column'}}>
+                <BarChart data={this.state.data} style={{fill: 'green', stroke: 'black'}}/>
+                <button style={{width: '200px', marginTop: '2em'}} onClick={this._generateRandomData.bind(this)}>random data</button>
+            </div>)
+
     }
 
 }
 
-React.render(<BarChartExample/>, document.body);
+ReactDOM.render(<BarChartExample/>, document.body);

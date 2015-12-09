@@ -15,7 +15,7 @@ export default (InheritedComponent) => class extends React.Component {
             for (let [elementToRender, elementAttributes] of this.props.attrs.entries()) {
                 childrens.add(
                     <Children key={`${Children}${elementToRender}`} {...elementAttributes}>
-                        elementAttributes.value;
+                        {elementAttributes.value}
                     </Children>
                 );
             }
