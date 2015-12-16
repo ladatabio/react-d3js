@@ -35,6 +35,7 @@ export default class Animate extends Component {
         this._nestedDefaultProps('attributes', {from: 0, ease: 'linear'});
         this._nestedDefaultProps('style', {from: 0, ease: 'linear'});
         this._nestedDefaultProps('transformations', {from: 0, ease: 'linear'});
+
         this.startTime = Date.now();
         window.requestAnimationFrame(this._tick.bind(this));
     }
@@ -56,9 +57,9 @@ export default class Animate extends Component {
         let transform = '';
 
         if (elementCanStartAnimation) {
-
             // Animate by changing progressively the attributes
             for (let [, attributeToChange] of this.props.attributes.entries()) {
+                console.log(attributeToChange)
                 elementAttributes[attributeToChange.name] = attributeToChange.from +
                 (attributeToChange.to(elementAttributes, elementIndex) - attributeToChange.from) *
                  ease(attributeToChange.ease)(elementAnimationProgression);
@@ -92,7 +93,6 @@ export default class Animate extends Component {
                 elementAttributes.style[styleToChange.name] = styleToChange.to;
             }
         }
-
         return elementAttributes;
     }
 
@@ -101,7 +101,6 @@ export default class Animate extends Component {
             this.props.children.props[this.props.childrenPropsToAnimate].entries()) {
             this.props.children.props[this.props.childrenPropsToAnimate][elementToAnimate] =  this._animateElement(elementAttributes, elementToAnimate);
         }
-
         return cloneElement(this.props.children);
     }
 
