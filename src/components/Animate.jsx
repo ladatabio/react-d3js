@@ -1,17 +1,17 @@
-import { Component, PropTypes, cloneElement, unmountComponentAtNode, findDOMNode } from 'react';
+import { Component, PropTypes, cloneElement } from 'react';
 import { ease } from 'd3';
 
 window.requestAnimationFrame = window.requestAnimationFrame ||
  window.mozRequestAnimationFrame ||
   window.webkitRequestAnimationFrame ||
-   window.msRequestAnimationFrame || function(callback){callback;};
+   window.msRequestAnimationFrame;
 
 export default class Animate extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            timer: 0
+            timer: 0,
         };
     }
 
@@ -25,9 +25,9 @@ export default class Animate extends Component {
 
     _nestedDefaultProps(propToMerge, defaultProp) {
         if (this.props[propToMerge].length > 0) {
-            for (let [propObjectToMerge, propObjectContent] of this.props[propToMerge].entries()) {
+            for (const [propObjectToMerge, propObjectContent] of this.props[propToMerge].entries()) {
                 this.props[propToMerge][propObjectToMerge] = Object.assign({}, defaultProp, propObjectContent);
-            };
+            }
         }
     }
 
@@ -35,7 +35,7 @@ export default class Animate extends Component {
         this._nestedDefaultProps('attributes', {from: 0, ease: 'linear'});
         this._nestedDefaultProps('style', {from: 0, ease: 'linear'});
         this._nestedDefaultProps('transformations', {from: 0, ease: 'linear'});
-
+        this.setState({timer: 0});
         this.startTime = Date.now();
         window.requestAnimationFrame(this._tick.bind(this));
     }
@@ -44,7 +44,7 @@ export default class Animate extends Component {
         if (this.props) {
             if (this.state.timer < (this.props.duration + this.props.delay * this.props.children.props[this.props.childrenPropsToAnimate].length)) {
                 this.setState({
-                    timer: Date.now() - this.startTime
+                    timer: Date.now() - this.startTime,
                 });
                 window.requestAnimationFrame(this._tick.bind(this));
             }
@@ -58,14 +58,14 @@ export default class Animate extends Component {
 
         if (elementCanStartAnimation) {
             // Animate by changing progressively the attributes
-            for (let [, attributeToChange] of this.props.attributes.entries()) {
+            for (const [, attributeToChange] of this.props.attributes.entries()) {
                 elementAttributes[attributeToChange.name] = attributeToChange.from +
                 (attributeToChange.to(elementAttributes, elementIndex) - attributeToChange.from) *
                  ease(attributeToChange.ease)(elementAnimationProgression);
             }
 
             // Animate by executing transformations
-            for (let [, transformationsToExecute] of this.props.transformations.entries()) {
+            for (const [, transformationsToExecute] of this.props.transformations.entries()) {
                 const transformationProperty = transformationsToExecute.from +
                 (transformationsToExecute.to - transformationsToExecute.from) *
                 ease(transformationsToExecute.ease)(elementAnimationProgression);
@@ -73,12 +73,12 @@ export default class Animate extends Component {
             }
         } else {
             // Animate by changing progressively the attributes
-            for (let [, attributeToChange] of this.props.attributes.entries()) {
+            for (const [, attributeToChange] of this.props.attributes.entries()) {
                 elementAttributes[attributeToChange.name] = attributeToChange.from;
             }
 
             // Animate by executing transformations
-            for (let [, transformationsToExecute] of this.props.transformations.entries()) {
+            for (const [, transformationsToExecute] of this.props.transformations.entries()) {
                 const transformationProperty = transformationsToExecute.from;
                 transform += ` ${transformationsToExecute.name}(${transformationProperty})`;
             }
@@ -88,7 +88,7 @@ export default class Animate extends Component {
 
         // Animate Style, for now, style animation is only change at end of the timer
         if (elementAnimationProgression >= 1) {
-            for (let [, styleToChange] of this.props.style.entries()) {
+            for (const [, styleToChange] of this.props.style.entries()) {
                 elementAttributes.style[styleToChange.name] = styleToChange.to;
             }
         }
@@ -96,9 +96,9 @@ export default class Animate extends Component {
     }
 
     _renderChildrens() {
-        for (let [elementToAnimate, elementAttributes] of
+        for (const [elementToAnimate, elementAttributes] of
             this.props.children.props[this.props.childrenPropsToAnimate].entries()) {
-            this.props.children.props[this.props.childrenPropsToAnimate][elementToAnimate] =  this._animateElement(elementAttributes, elementToAnimate);
+            this.props.children.props[this.props.childrenPropsToAnimate][elementToAnimate] = this._animateElement(elementAttributes, elementToAnimate);
         }
         return cloneElement(this.props.children);
     }
@@ -106,7 +106,7 @@ export default class Animate extends Component {
     render() {
         return this._renderChildrens();
     }
-};
+}
 
 Animate.propTypes = {
     duration: PropTypes.number,
@@ -118,13 +118,13 @@ Animate.propTypes = {
             start: PropTypes.number,
             from: PropTypes.oneOfType([
                 PropTypes.number,
-                PropTypes.func
+                PropTypes.func,
             ]),
             to: PropTypes.oneOfType([
                 PropTypes.number,
-                PropTypes.func
+                PropTypes.func,
             ]).isRequired,
-            ease: PropTypes.string
+            ease: PropTypes.string,
         })
     ),
     style: PropTypes.arrayOf(
@@ -132,7 +132,7 @@ Animate.propTypes = {
             name: PropTypes.string.isRequired,
         })
     ),
-    transformations: PropTypes.arrayOf(PropTypes.object)
+    transformations: PropTypes.arrayOf(PropTypes.object),
 };
 
 Animate.defaultProps = {
@@ -142,5 +142,5 @@ Animate.defaultProps = {
     childrenPropsToAnimate: '',
     attributes: [],
     style: [],
-    transformations: []
+    transformations: [],
 };

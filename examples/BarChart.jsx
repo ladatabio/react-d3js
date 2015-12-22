@@ -10,19 +10,19 @@ export class BarChartExample extends React.Component {
             width: 300,
             height: 300,
             margin: 30,
-            data: [ 5, 10, 13, 58, 21, 25, 22, 18, 15, 13, 11, 12]
-        }
+            data: [5, 10, 13, 58, 21, 25, 22, 18, 15, 13, 11, 12],
+        };
     }
 
     _generateRandomData() {
-        let arr = [];
-        for (let i=0, t=Math.round(Math.random()*20 +1 ); i<t; i++) {
-            arr.push(Math.round(Math.random() * t))
+        const arr = [];
+        for (let i = 0, t = Math.round(Math.random() * 20 + 1); i < t; i++) {
+            arr.push(Math.round(Math.random() * t));
         }
 
         this.setState({
-            data: arr
-        })
+            data: arr,
+        });
     }
 
     render() {
@@ -30,8 +30,7 @@ export class BarChartExample extends React.Component {
             <div style={{display: 'flex', flexDirection: 'column'}}>
                 <BarChart data={this.state.data} style={{fill: 'green', stroke: 'black'}}/>
                 <button style={{width: '200px', marginTop: '2em'}} onClick={this._generateRandomData.bind(this)}>random data</button>
-            </div>)
-
+            </div>);
     }
 
 }
