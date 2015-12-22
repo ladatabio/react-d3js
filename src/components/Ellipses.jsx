@@ -1,4 +1,4 @@
-import SVGSkeleton from './SVGSkeleton';
+import SVGSkeleton from './SVGSkeleton.jsx';
 import React from 'react';
 
 class Ellipses extends React.Component {

@@ -59,7 +59,6 @@ export default class Animate extends Component {
         if (elementCanStartAnimation) {
             // Animate by changing progressively the attributes
             for (let [, attributeToChange] of this.props.attributes.entries()) {
-                console.log(attributeToChange)
                 elementAttributes[attributeToChange.name] = attributeToChange.from +
                 (attributeToChange.to(elementAttributes, elementIndex) - attributeToChange.from) *
                  ease(attributeToChange.ease)(elementAnimationProgression);

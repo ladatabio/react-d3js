@@ -1,10 +1,10 @@
-import Rectangles from './components/Rectangles';
-import Circles from './components/Circles';
-import Lines from './components/Lines';
-import Texts from './components/Texts';
-import BarChart from './components/BarChart';
-import Paths from './components/Paths';
-import Ellipses from './components/Ellipses';
-import Animate from './components/Animate';
+import Rectangles from './components/Rectangles.jsx';
+import Circles from './components/Circles.jsx';
+import Lines from './components/Lines.jsx';
+import Texts from './components/Texts.jsx';
+import BarChart from './components/BarChart.jsx';
+import Paths from './components/Paths.jsx';
+import Ellipses from './components/Ellipses.jsx';
+import Animate from './components/Animate.jsx';
 
 export { Rectangles, Circles, Lines, Texts, Paths, Ellipses, Animate, BarChart };

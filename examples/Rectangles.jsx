@@ -36,4 +36,4 @@ export class BarChartExample extends React.Component {
 
 }
 
-React.render(<BarChartExample/>, document.body);
+React.render(<BarChartExample/>, document.getElementById('app'));

@@ -87,4 +87,4 @@ PieChart.defaultProps = {
     animation: false
 };
 
-React.render(<PieChart/>, document.body);
+React.render(<PieChart/>, document.getElementById('app'));

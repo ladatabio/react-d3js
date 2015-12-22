@@ -115,7 +115,8 @@ export default class BarChart extends React.Component {
                     from: this.props.height,
                     to: function(elementAttributes, elementIndex) {
                         return this.props.height - this.yScale(elementAttributes.value) - 20;
-                    }.bind(this)
+                    }.bind(this),
+                    ease: 'bounce'
                 },
                 {
                     name: 'height',

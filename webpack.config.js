@@ -1,42 +1,35 @@
 var path = require('path');
 var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
+    devtool: 'eval',
     entry: [
-        'webpack-dev-server/client?http://localhost:8080/',
-        'webpack/hot/only-dev-server'
+      'webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr',
+      './src/index.js'
     ],
     output: {
-        filename: 'index.js',
-        path: path.join(__dirname, '/examples/public/'),
-        publicPath: '/examples/public/'
+      path: path.join(__dirname, 'dist'),
+      filename: 'bundle.js',
+      publicPath: 'http://localhost:3000/public/'
     },
-    resolve: {
-        extensions: [
-            '', '.js', '.json', '.jsx'
-        ]
-    },
+    plugins: [
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.NoErrorsPlugin()
+    ],
     module: {
         loaders: [
             {
                 test: /\.json$/,
                 loaders: ['json']
             }, {
-                test: /\.jsx$/,
+                test: /\.(jsx|js)$/,
                 exclude: /node_modules/,
                 loaders: [
-                    'react-hot', 'jsx-loader', 'babel-loader'
-                ]
-            }, {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loaders: [
-                    'react-hot','jsx-loader', 'babel-loader'
+                  'babel'
                 ]
             }, {
                 test: /\.css$/,
-                loader: ExtractTextPlugin.extract('style', 'css!cssnext')
+                loaders: ['style', 'css']
             }, {
                 test: /\.(ico|jpe?g|png|gif)$/,
                 loaders: ['file?name=[path][name].[ext]&context=./src']
@@ -48,8 +41,5 @@ module.exports = {
                 loaders: ['file?name=[path][name].[ext]&context=./src']
             }
         ]
-    },
-    plugins: ([
-        new webpack.HotModuleReplacementPlugin()
-    ])
+    }
 };

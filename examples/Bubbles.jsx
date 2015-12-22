@@ -55,4 +55,4 @@ export class Test extends React.Component {
 
 };
 
-React.render(<Test/>, document.body);
+React.render(<Test/>, document.getElementById('app'));

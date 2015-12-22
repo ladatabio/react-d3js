@@ -1,4 +1,4 @@
-import Skull from './Skull';
+import Skull from './Skull.jsx';
 import React from 'react';
 
 class Circles extends React.Component {
