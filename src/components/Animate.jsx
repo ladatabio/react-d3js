@@ -19,8 +19,10 @@ export default class Animate extends Component {
         this._start();
     }
 
-    componentWillReceiveProps() {
-        this._start();
+    componentWillReceiveProps(nextProps, nextState) {
+        if (nextProps.animate === true) {
+            this._start();
+        }
     }
 
     _nestedDefaultProps(propToMerge, defaultProp) {

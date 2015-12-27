@@ -8,6 +8,7 @@ export default class BarChart extends React.Component {
         super(props);
         this._defineScales();
         this.state = {
+            animate: false,
             rectanglesAttributes: this._buildRectangles(),
             xLabelsAttributes: this._buildXLabels(),
             yLabelsAttributes: this._buildYLabels(),
@@ -17,6 +18,7 @@ export default class BarChart extends React.Component {
     componentWillReceiveProps() {
         this._defineScales();
         this.setState({
+            animate: true,
             rectanglesAttributes: this._buildRectangles(),
             xLabelsAttributes: this._buildXLabels(),
             yLabelsAttributes: this._buildYLabels(),
@@ -31,6 +33,7 @@ export default class BarChart extends React.Component {
     _buildData() {
         return this.props.data.map((value, index) => {
             return {
+                key: index,
                 x: this.xScale(index),
                 y: this.props.height - this.yScale(value) - 20,
                 width: this.props.width / this.props.data.length - 8,
@@ -47,16 +50,20 @@ export default class BarChart extends React.Component {
 
         return newData.map((field) => {
             field.onMouseOver = (e) => {
+                const key = e.target.attributes['data-reactid'].value.split('$')[1];
                 const newFormattedData = newData.slice();
-                newFormattedData[e] = Object.assign(newFormattedData[e], {style: {fill: 'purple'}}, newFormattedData[e].style);
+                newFormattedData[key] = Object.assign(newFormattedData[key], {style: {fill: 'purple'}}, newFormattedData[key].style);
                 this.setState({
+                    animate: false,
                     rectanglesAttributes: newFormattedData,
                 });
             };
             field.onMouseLeave = (e) => {
+                const key = e.target.attributes['data-reactid'].value.split('$')[1];
                 const newFormattedData = newData.slice();
-                newFormattedData[e] = Object.assign(newFormattedData[e], {style: {fill: 'green', stroke: 'black'}});
+                newFormattedData[key] = Object.assign(newFormattedData[key], {style: {fill: 'green', stroke: 'black'}});
                 this.setState({
+                    animate: false,
                     rectanglesAttributes: newFormattedData,
                 });
             };
@@ -131,7 +138,7 @@ export default class BarChart extends React.Component {
     render() {
         return (
             <svg width = {this.props.width} height = {this.props.height} >
-                <Animate {...this._animations()}>
+                <Animate {...this._animations()} animate={this.state.animate}>
                     <Rectangles attrs={this.state.rectanglesAttributes} onClick={this._changeColor.bind(this)}/>
                 </Animate>
                 <Texts attrs={this.state.xLabelsAttributes}/>

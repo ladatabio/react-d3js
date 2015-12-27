@@ -1,11 +1,11 @@
 import React from 'react';
 import d3 from 'd3';
-import { Paths, Animate, Texts } from '../index.js';
+import { Paths, Animate } from '../index.js';
 
 const myAnimation = {
     duration: 400,
     childrenPropsToAnimate: 'attrs',
-    delay: 200,
+    delay: 10,
     transformations: [
         {
             name: 'rotate',
@@ -26,7 +26,6 @@ export default class PieChart extends React.Component {
     }
 
     _renderPieChart() {
-        const data = [70, 20, 8, 2, 5, 6, 8, 9, 10, 30, 20, 10];
         const colors = d3.scale
             .ordinal()
             .range(this.props.colors);
@@ -42,7 +41,7 @@ export default class PieChart extends React.Component {
                 .outerRadius(Math.min(this.props.width, this.props.height) / 3)
                 .innerRadius(this.props.margin);
 
-        return pie(data).map((d, i) => {
+        return pie(this.props.data).map((d, i) => {
             return {
                 d: arc(d),
                 style: {
@@ -53,15 +52,15 @@ export default class PieChart extends React.Component {
     }
 
     render() {
-        return(
+        return (
             <svg width="100%" height="500px">
                 <g transform="translate(300,150)">
-                    <Animate {...myAnimation}>
+                    <Animate {...myAnimation} animate={true}>
                         <Paths attrs={this._renderPieChart()}/>
                     </Animate>
                 </g>
             </svg>
-        )
+        );
     }
 }
 
