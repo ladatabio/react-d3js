@@ -3,7 +3,7 @@
   "rules": {
       "indent": [2,4],
       "no-console": 0,
-      "object-curly-spacing": 0,
+      "react/jsx-closing-bracket-location": 0,
       "react/prop-types": 0
   }
 }
