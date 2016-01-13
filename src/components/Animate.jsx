@@ -1,6 +1,8 @@
 import { Component, PropTypes, cloneElement } from 'react';
 import { ease } from 'd3';
 
+import { handleNestedDefaultProps } from '../utils.js';
+
 window.requestAnimationFrame = window.requestAnimationFrame ||
  window.mozRequestAnimationFrame ||
   window.webkitRequestAnimationFrame ||
@@ -34,10 +36,16 @@ export default class Animate extends Component {
     }
 
     _start() {
+        //this.props = handleNestedDefaultProps(this.props, this.nestedDefaultProps)
+        const nestedDefaultProps = {
+            attributes: {from: 0, ease: 'linear'},
+            style: {from: 0, ease: 'linear'},
+            transformations: {from: 0, ease: 'linear'}
+        }
         this._nestedDefaultProps('attributes', {from: 0, ease: 'linear'});
         this._nestedDefaultProps('style', {from: 0, ease: 'linear'});
         this._nestedDefaultProps('transformations', {from: 0, ease: 'linear'});
-        this.setState({timer: 0});
+        this.setState({timer: 0 });
         this.startTime = Date.now();
         window.requestAnimationFrame(this._tick.bind(this));
     }
@@ -98,11 +106,14 @@ export default class Animate extends Component {
     }
 
     _renderChildrens() {
-        for (const [elementToAnimate, elementAttributes] of
-            this.props.children.props[this.props.childrenPropsToAnimate].entries()) {
-            this.props.children.props[this.props.childrenPropsToAnimate][elementToAnimate] = this._animateElement(elementAttributes, elementToAnimate);
+        const { delay, children, childrenPropsToAnimate, duration } = this.props;
+        if (this.state.timer <= (duration + delay * (children.props[childrenPropsToAnimate].length + 1))) {
+            for (const [elementToAnimate, elementAttributes] of children.props[childrenPropsToAnimate].entries()) {
+                children.props[childrenPropsToAnimate][elementToAnimate] = this._animateElement(elementAttributes, elementToAnimate);
+            }
+            return cloneElement(children);
         }
-        return cloneElement(this.props.children);
+        return children;
     }
 
     render() {
@@ -146,3 +157,9 @@ Animate.defaultProps = {
     style: [],
     transformations: [],
 };
+
+Animate.nestedDefaultProps = {
+    attributes: {from: 0, ease: 'linear'},
+    style: {from: 0, ease: 'linear'},
+    transformations: {from: 0, ease: 'linear'}
+}
