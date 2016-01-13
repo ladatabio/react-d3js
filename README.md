@@ -1,4 +1,4 @@
-# react-d3js 0.2.0
+# react-d3js 0.2.1
 
 ## A library to optimize d3.js functions into React.js applications
 
