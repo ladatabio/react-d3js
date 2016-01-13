@@ -1,32 +1,26 @@
 import SVGSkeleton from './SVGSkeleton.jsx';
 import React from 'react';
 
-class Rectangles extends React.Component {
+const attributes = {
+    text: 0,
+    fill: 'black',
+    x: 0,
+    y: 0,
+    rx: 0,
+    ry: 0,
+    width: 0,
+    height: 0,
+    style: {
+    },
+    transform: '',
+};
 
-    constructor() {
-        super();
-        this.attributes = {
-            text: 0,
-            fill: 'black',
-            x: 0,
-            y: 0,
-            rx: 0,
-            ry: 0,
-            width: 0,
-            height: 0,
-            style: {
-            },
-            transform: ''
-        };
+const childrensTagName = 'Rect';
 
-        this.childrensTagName = 'Rect';
-    }
-
-    render() {
-        return (
-            <g>{this.props.children}</g>
-        );
-    }
+function Rectangles(props) {
+    return (
+        <g>{props.children}</g>
+    );
 }
 
-export default SVGSkeleton(Rectangles);
+export default SVGSkeleton(Rectangles, childrensTagName, attributes);

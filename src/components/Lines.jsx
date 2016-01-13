@@ -1,28 +1,22 @@
 import SVGSkeleton from './SVGSkeleton.jsx';
 import React from 'react';
 
-class Lines extends React.Component {
+const attributes = {
+    x1: 0,
+    x2: 0,
+    y1: 0,
+    y2: 0,
+    style: {
+    },
+    transform: '',
+};
 
-    constructor() {
-        super();
-        this.attributes = {
-            x1: 0,
-            x2: 0,
-            y1: 0,
-            y2: 0,
-            style: {
-            },
-            transform: ''
-        };
+const childrensTagName = 'Line';
 
-        this.childrensTagName = 'Line';
-    }
-
-    render() {
-        return (
-            <g>{this.props.children}</g>
-        );
-    }
+function Lines(props) {
+    return (
+        <g>{props.children}</g>
+    );
 }
 
-export default SVGSkeleton(Lines);
+export default SVGSkeleton(Lines, childrensTagName, attributes);

@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-export default (InheritedComponent) => class extends React.Component {
+export default (InheritedComponent, childrensTagName, attributes) => class extends Component {
 
         constructor(props) {
             super(props);
-            const {childrensTagName, attributes} = new InheritedComponent();
             this.childrensTagName = childrensTagName;
             this.attributes = attributes;
         }

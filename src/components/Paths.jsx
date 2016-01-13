@@ -1,25 +1,19 @@
 import SVGSkeleton from './SVGSkeleton.jsx';
 import React from 'react';
 
-class Paths extends React.Component {
+const attributes = {
+    d: '',
+    style: {
+    },
+    transform: '',
+};
 
-    constructor() {
-        super();
-        this.attributes = {
-            d: '',
-            style: {
-            },
-            transform: ''
-        };
+const childrensTagName = 'Path';
 
-        this.childrensTagName = 'Path';
-    }
-
-    render() {
-        return (
-            <g>{this.props.children}</g>
-        );
-    }
+function Paths(props) {
+    return (
+        <g>{props.children}</g>
+    );
 }
 
-export default SVGSkeleton(Paths);
+export default SVGSkeleton(Paths, childrensTagName, attributes);

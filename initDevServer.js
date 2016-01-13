@@ -2,7 +2,7 @@
 const path = require('path');
 const express = require('express');
 const webpack = require('webpack');
-const config = require('./webpack.config');
+const config = require('./webpack.config.dev.js');
 
 const app = express();
 if (process.argv[2]) {

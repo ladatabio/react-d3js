@@ -1,29 +1,23 @@
 import SVGSkeleton from './SVGSkeleton.jsx';
 import React from 'react';
 
-class Texts extends React.Component {
+const attributes = {
+    value: 0,
+    x: 0,
+    y: 0,
+    dx: 0,
+    dy: 0,
+    style: {
+    },
+    transform: '',
+};
 
-    constructor() {
-        super();
-        this.attributes = {
-            value: 0,
-            x: 0,
-            y: 0,
-            dx: 0,
-            dy: 0,
-            style: {
-            },
-            transform: ''
-        };
+const childrensTagName = 'Text';
 
-        this.childrensTagName = 'Text';
-    }
-
-    render() {
-        return (
-            <g>{this.props.children}</g>
-        );
-    }
+function Texts(props) {
+    return (
+        <g>{props.children}</g>
+    );
 }
 
-export default SVGSkeleton(Texts);
+export default SVGSkeleton(Texts, childrensTagName, attributes);

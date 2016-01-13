@@ -1,28 +1,22 @@
 import SVGSkeleton from './SVGSkeleton.jsx';
 import React from 'react';
 
-class Ellipses extends React.Component {
+const attributes = {
+    cx: 0,
+    cy: 0,
+    rx: 0,
+    ry: 0,
+    style: {
+    },
+    transform: '',
+};
 
-    constructor() {
-        super();
-        this.attributes = {
-            cx: 0,
-            cy: 0,
-            rx: 0,
-            ry: 0,
-            style: {
-            },
-            transform: ''
-        };
+const childrensTagName = 'Ellipse';
 
-        this.childrensTagName = 'Ellipse';
-    }
-
-    render() {
-        return (
-            <g>{this.props.children}</g>
-        );
-    }
+function Ellipses(props) {
+    return (
+        <g>{props.children}</g>
+    );
 }
 
-export default SVGSkeleton(Ellipses);
+export default SVGSkeleton(Ellipses, childrensTagName, attributes);

@@ -1,27 +1,21 @@
 import SVGSkeleton from './SVGSkeleton.jsx';
 import React from 'react';
 
-class Circles extends React.Component {
+const attributes = {
+    r: 0,
+    cx: 0,
+    cy: 0,
+    style: {
+    },
+    transform: '',
+};
 
-    constructor() {
-        super();
-        this.attributes = {
-            r: 0,
-            cx: 0,
-            cy: 0,
-            style: {
-            },
-            transform: ''
-        };
+const childrensTagName = 'Circle';
 
-        this.childrensTagName = 'Circle';
-    }
-
-    render() {
-        return (
-            <g>{this.props.children}</g>
-        );
-    }
+function Circles(props) {
+    return (
+        <g>{props.children}</g>
+    );
 }
 
-export default SVGSkeleton(Circles);
+export default SVGSkeleton(Circles, childrensTagName, attributes);

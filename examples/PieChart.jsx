@@ -15,5 +15,4 @@ export class PieChartExample extends React.Component {
     }
 }
 
-
 render(<PieChartExample/>, document.getElementById('app'));
