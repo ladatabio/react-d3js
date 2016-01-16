@@ -8,7 +8,7 @@ export default class BarChart extends React.Component {
         super(props);
         this._defineScales();
         this.state = {
-            animate: false,
+            animate: true,
             rectanglesAttributes: this._buildRectangles(),
             xLabelsAttributes: this._buildXLabels(),
             yLabelsAttributes: this._buildYLabels(),
@@ -47,7 +47,6 @@ export default class BarChart extends React.Component {
 
     _buildRectangles() {
         const newData = this._cloneNestedArray(this._buildData());
-
         return newData.map((field) => {
             field.onMouseOver = (e) => {
                 const key = e.target.attributes['data-reactid'].value.split('$')[1];
@@ -128,7 +127,6 @@ export default class BarChart extends React.Component {
                     to: (elementAttributes) => {
                         return this.yScale(elementAttributes.value);
                     },
-                    ease: 'bounce',
                 },
             ],
         };

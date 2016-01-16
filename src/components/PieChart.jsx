@@ -2,27 +2,35 @@ import React from 'react';
 import d3 from 'd3';
 import { Paths, Animate } from '../index.js';
 
-const myAnimation = {
-    duration: 400,
-    childrenPropsToAnimate: 'attrs',
-    delay: 10,
-    transformations: [
-        {
-            name: 'rotate',
-            from: 0,
-            to: 320,
-        },
-        {
-            name: 'scale',
-            from: 0,
-            to: 1,
-        },
-    ],
-};
-
 export default class PieChart extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            animate: true,
+        };
+        this.animationProperties = {
+            duration: 200,
+            childrenPropsToAnimate: 'attrs',
+            delay: 50,
+            transformations: [
+                {
+                    name: 'rotate',
+                    from: 0,
+                    to: 320,
+                },
+                {
+                    name: 'scale',
+                    from: 0,
+                    to: 1,
+                },
+            ],
+        };
+    }
+
+    componentWillReceiveProps() {
+        this.setState({
+            animate: true,
+        });
     }
 
     _renderPieChart() {
@@ -43,6 +51,7 @@ export default class PieChart extends React.Component {
 
         return pie(this.props.data).map((d, i) => {
             return {
+                key: i,
                 d: arc(d),
                 style: {
                     fill: colors(i),
@@ -55,7 +64,7 @@ export default class PieChart extends React.Component {
         return (
             <svg width="100%" height="500px">
                 <g transform="translate(300,150)">
-                    <Animate {...myAnimation} animate={true}>
+                    <Animate {...this.animationProperties} animate={this.state.animate}>
                         <Paths attrs={this._renderPieChart()}/>
                     </Animate>
                 </g>

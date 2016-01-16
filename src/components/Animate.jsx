@@ -1,8 +1,6 @@
 import { Component, PropTypes, cloneElement } from 'react';
 import { ease } from 'd3';
 
-import { handleNestedDefaultProps } from '../utils.js';
-
 window.requestAnimationFrame = window.requestAnimationFrame ||
  window.mozRequestAnimationFrame ||
   window.webkitRequestAnimationFrame ||
@@ -18,97 +16,82 @@ export default class Animate extends Component {
     }
 
     componentWillMount() {
-        this._start();
-    }
-
-    componentWillReceiveProps(nextProps, nextState) {
-        if (nextProps.animate === true) {
-            this._start();
+        this.initialChildrenProps = this.props.children;
+        if (this.props.animate) {
+            this._initiateAnimations();
         }
     }
 
-    _nestedDefaultProps(propToMerge, defaultProp) {
-        if (this.props[propToMerge].length > 0) {
-            for (const [propObjectToMerge, propObjectContent] of this.props[propToMerge].entries()) {
-                this.props[propToMerge][propObjectToMerge] = Object.assign({}, defaultProp, propObjectContent);
-            }
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.animate) {
+            this._initiateAnimations();
         }
     }
 
-    _start() {
-        //this.props = handleNestedDefaultProps(this.props, this.nestedDefaultProps)
-        const nestedDefaultProps = {
-            attributes: {from: 0, ease: 'linear'},
-            style: {from: 0, ease: 'linear'},
-            transformations: {from: 0, ease: 'linear'}
-        }
-        this._nestedDefaultProps('attributes', {from: 0, ease: 'linear'});
-        this._nestedDefaultProps('style', {from: 0, ease: 'linear'});
-        this._nestedDefaultProps('transformations', {from: 0, ease: 'linear'});
-        this.setState({timer: 0 });
+    _initiateAnimations() {
+        this.setState({ timer: 0 });
         this.startTime = Date.now();
         window.requestAnimationFrame(this._tick.bind(this));
     }
 
     _tick() {
-        if (this.props) {
-            if (this.state.timer < (this.props.duration + this.props.delay * this.props.children.props[this.props.childrenPropsToAnimate].length)) {
-                this.setState({
-                    timer: Date.now() - this.startTime,
-                });
-                window.requestAnimationFrame(this._tick.bind(this));
-            }
+        if (this._canContinueAnimation()) {
+            this.setState({
+                timer: Date.now() - this.startTime,
+            });
+            window.requestAnimationFrame(this._tick.bind(this));
         }
     }
 
-    _animateElement(elementAttributes, elementIndex) {
-        const elementCanStartAnimation = this.state.timer - (this.props.delay * elementIndex) >= 0;
-        const elementAnimationProgression = (this.state.timer - this.props.delay * elementIndex) / this.props.duration;
-        let transform = '';
+    _canContinueAnimation() {
+        const { delay, children, childrenPropsToAnimate, duration } = this.props;
+        return this.state.timer <= (duration + delay * (children.props[childrenPropsToAnimate].length + 1));
+    }
 
-        if (elementCanStartAnimation) {
-            // Animate by changing progressively the attributes
-            for (const [, attributeToChange] of this.props.attributes.entries()) {
-                elementAttributes[attributeToChange.name] = attributeToChange.from +
-                (attributeToChange.to(elementAttributes, elementIndex) - attributeToChange.from) *
-                 ease(attributeToChange.ease)(elementAnimationProgression);
-            }
-
-            // Animate by executing transformations
-            for (const [, transformationsToExecute] of this.props.transformations.entries()) {
-                const transformationProperty = transformationsToExecute.from +
-                (transformationsToExecute.to - transformationsToExecute.from) *
-                ease(transformationsToExecute.ease)(elementAnimationProgression);
-                transform += ` ${transformationsToExecute.name}(${transformationProperty})`;
-            }
-        } else {
-            // Animate by changing progressively the attributes
-            for (const [, attributeToChange] of this.props.attributes.entries()) {
-                elementAttributes[attributeToChange.name] = attributeToChange.from;
-            }
-
-            // Animate by executing transformations
-            for (const [, transformationsToExecute] of this.props.transformations.entries()) {
-                const transformationProperty = transformationsToExecute.from;
-                transform += ` ${transformationsToExecute.name}(${transformationProperty})`;
-            }
+    _updateAttributes(attributes, index, progress) {
+        for (const attributeToChange of Object.values(this.props.attributes)) {
+            const { from = 0, to, name, easeName = 'linear' } = attributeToChange;
+            attributes[name] = from + (to(attributes, index) - from) * ease(easeName)(progress);
         }
+        return attributes;
+    }
 
-        elementAttributes.transform = transform; //
+    _updateTransformations(progress) {
+        let transformations = '';
+        for (const transformationsToExecute of Object.values(this.props.transformations)) {
+            const { from = 0, to, name, easeName = 'linear' } = transformationsToExecute;
+            const transformationProperty = from + (to - from) * ease(easeName)(progress);
+            transformations += ` ${name}(${transformationProperty})`;
+        }
+        return transformations;
+    }
 
-        // Animate Style, for now, style animation is only change at end of the timer
-        if (elementAnimationProgression >= 1) {
+    _updateStyle(style, progress) {
+        if (progress >= 1) {
             for (const [, styleToChange] of this.props.style.entries()) {
-                elementAttributes.style[styleToChange.name] = styleToChange.to;
+                const { to, name } = styleToChange;
+                style[name] = to;
             }
         }
+        return style;
+    }
+
+    _animateElement(elementAttributes, elementIndex) {
+        const { duration, delay } = this.props;
+        const progress = (this.state.timer - delay * elementIndex) / duration;
+
+        elementAttributes = this._updateAttributes(elementAttributes, elementIndex, progress);
+        elementAttributes.transform = this._updateTransformations(progress);
+        elementAttributes.style = this._updateStyle(elementAttributes.style, progress);
+
         return elementAttributes;
     }
 
     _renderChildrens() {
-        const { delay, children, childrenPropsToAnimate, duration } = this.props;
-        if (this.state.timer <= (duration + delay * (children.props[childrenPropsToAnimate].length + 1))) {
-            for (const [elementToAnimate, elementAttributes] of children.props[childrenPropsToAnimate].entries()) {
+        const { children, childrenPropsToAnimate } = this.props;
+
+        if (this._canContinueAnimation()) {
+            for (const [elementToAnimate, elementAttributes] of Object.entries(children.props[childrenPropsToAnimate])) {
                 children.props[childrenPropsToAnimate][elementToAnimate] = this._animateElement(elementAttributes, elementToAnimate);
             }
             return cloneElement(children);
@@ -137,7 +120,7 @@ Animate.propTypes = {
                 PropTypes.number,
                 PropTypes.func,
             ]).isRequired,
-            ease: PropTypes.string,
+            easeName: PropTypes.string,
         })
     ),
     style: PropTypes.arrayOf(
@@ -157,9 +140,3 @@ Animate.defaultProps = {
     style: [],
     transformations: [],
 };
-
-Animate.nestedDefaultProps = {
-    attributes: {from: 0, ease: 'linear'},
-    style: {from: 0, ease: 'linear'},
-    transformations: {from: 0, ease: 'linear'}
-}
