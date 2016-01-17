@@ -12,7 +12,7 @@ export class Examples extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            chartToDisplay: 'PieChart',
+            chartToDisplay: 'BarChart',
             data: [5, 10, 13, 58, 21, 25, 22, 18, 15, 13, 11, 12],
         };
     }
@@ -42,10 +42,8 @@ export class Examples extends React.Component {
 
     render() {
         return (
-            <div style={{display: 'flex', flexDirection: 'row'}}>
-                <div style={{display: 'flex', flexDirection: 'column'}}>
+            <div style={{display: 'flex', flexDirection: 'column'}}>
                     {this._displayChart()}
-                </div>
                 <div style={{display: 'flex', flexDirection: 'column'}}>
                     <select onChange={this._handleChartChange.bind(this)} value={this.state.chartToDisplay} style={{width: '200px', margin: '1em auto 4em auto'}}>
                         <option value="PieChart">PieChart</option>

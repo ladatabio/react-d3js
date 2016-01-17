@@ -1,6 +1,7 @@
 import React from 'react';
 import d3 from 'd3';
-import { Rectangles, Animate, Texts } from '../index.js';
+
+import { Rectangles, Texts, Animate, SVGContainer } from '../index.js';
 
 export default class BarChart extends React.Component {
 
@@ -134,13 +135,13 @@ export default class BarChart extends React.Component {
 
     render() {
         return (
-            <svg width = {this.props.width} height = {this.props.height} >
+            <SVGContainer width={this.props.width} height={this.props.height} >
                 <Animate {...this._animations()} animate={this.state.animate}>
                     <Rectangles attrs={this.state.rectanglesAttributes} onClick={this._changeColor.bind(this)}/>
                 </Animate>
                 <Texts attrs={this.state.xLabelsAttributes}/>
                 <Texts attrs={this.state.yLabelsAttributes}/>
-            </svg>);
+            </SVGContainer>);
     }
 }
 

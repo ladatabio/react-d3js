@@ -1,6 +1,7 @@
 import React from 'react';
 import d3 from 'd3';
-import { Paths, Animate } from '../index.js';
+
+import { Paths, Animate, SVGContainer } from '../index.js';
 
 export default class PieChart extends React.Component {
     constructor(props) {
@@ -62,13 +63,11 @@ export default class PieChart extends React.Component {
 
     render() {
         return (
-            <svg width="100%" height="500px">
-                <g transform="translate(300,150)">
+            <SVGContainer width={250} height={250} contentPosition="center">
                     <Animate {...this.animationProperties} animate={this.state.animate}>
                         <Paths attrs={this._renderPieChart()}/>
                     </Animate>
-                </g>
-            </svg>
+            </SVGContainer>
         );
     }
 }
