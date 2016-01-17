@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BarChart, PieChart } from '../src/index.js';
+import { BarChart, PieChart, LineChart } from '../src/index.js';
 
 const charts = {
     PieChart,
     BarChart,
+    LineChart,
 };
 
 export class Examples extends React.Component {
@@ -48,6 +49,7 @@ export class Examples extends React.Component {
                     <select onChange={this._handleChartChange.bind(this)} value={this.state.chartToDisplay} style={{width: '200px', margin: '1em auto 4em auto'}}>
                         <option value="PieChart">PieChart</option>
                         <option value="BarChart">BarChart</option>
+                        <option value="LineChart">LineChart</option>
                     </select>
                     <button style={{width: '200px', margin: '2em auto 0em auto'}} onClick={this._generateRandomData.bind(this)}>random data</button>
                 </div>

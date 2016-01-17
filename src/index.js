@@ -6,8 +6,11 @@ import Paths from './components/Paths.jsx';
 import Ellipses from './components/Ellipses.jsx';
 import Animate from './components/Animate.jsx';
 import SVGContainer from './components/SVGContainer.jsx';
+import XAxis from './components/XAxis.jsx';
+import YAxis from './components/YAxis.jsx';
 import BarChart from './components/BarChart.jsx';
 import PieChart from './components/PieChart.jsx';
+import LineChart from './components/LineChart.jsx';
 
 
-export { Rectangles, Circles, Lines, Texts, Paths, Ellipses, Animate, SVGContainer, BarChart, PieChart };
+export { Rectangles, Circles, Lines, Texts, Paths, Ellipses, Animate, SVGContainer, XAxis, YAxis, BarChart, PieChart, LineChart };
