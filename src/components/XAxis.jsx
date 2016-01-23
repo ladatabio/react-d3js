@@ -1,29 +1,34 @@
 import React, { Component } from 'react';
-import d3 from 'd3';
 
 import { Lines } from '../index.js';
 
-export default class Axis extends Component {
+export default class XAxis extends Component {
 
     _computeAttributes() {
-        const { width, height, data, scale, style } = this.props;
+        const { scale, verticalPosition, style, ticksNumber } = this.props;
+
+        let domain = scale.domain();
 
         const axis = [
             {
-                x1: 0,
-                x2: width,
-                y1: height,
-                y2: height,
+                x1: scale(domain[0]),
+                x2: scale(domain[domain.length - 1]),
+                y1: verticalPosition,
+                y2: verticalPosition,
                 style,
             },
         ];
 
-        const ticks = data.map((d, i) => {
+        if (scale.ticks) {
+            domain = scale.ticks(ticksNumber);
+        }
+
+        const ticks = domain.map((d) => {
             return {
-                x1: scale(i),
-                x2: scale(i),
-                y1: height,
-                y2: height - 10,
+                x1: scale(d),
+                x2: scale(d),
+                y1: verticalPosition + 10,
+                y2: verticalPosition,
                 style,
             };
         });
@@ -53,17 +58,18 @@ export default class Axis extends Component {
     }
 }
 
-Axis.propTypes = {
-    data: React.PropTypes.array.isRequired,
+XAxis.propTypes = {
     width: React.PropTypes.number,
     height: React.PropTypes.number,
+    ticksNumber: React.PropTypes.number,
     scale: React.PropTypes.function,
     style: React.PropTypes.object,
 };
 
-Axis.defaultProps = {
+XAxis.defaultProps = {
     width: 600,
     height: 300,
+    ticksNumber: 5,
     style: {
         stroke: 'black',
         strokeWidth: 2,

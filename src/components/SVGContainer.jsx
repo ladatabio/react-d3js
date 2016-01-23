@@ -1,22 +1,22 @@
 import React, { Component, PropTypes } from 'react';
-import { findDOMNode } from 'react-dom';
 
 export default class SVGContainer extends Component {
 
     _displayContainer() {
+        const { width, height, style, children } = this.props;
         switch (this.props.engine) {
         case 'viewBox':
-            let viewBox = `0 0 ${this.props.width} ${this.props.height}`;
+            let viewBox = `0 0 ${width} ${height}`;
             if (this.props.contentPosition === 'center') {
-                viewBox = `-${this.props.width / 2} -${this.props.height / 2} ${this.props.width} ${this.props.height}`;
+                viewBox = `-${width / 2} -${height / 2} ${width} ${height}`;
             }
             return (
-                <svg {...this.props.style}
-                  width={this.props.width}
-                  height={this.props.height}
+                <svg {...style}
+                  width={width}
+                  height={height}
                   viewBox={viewBox} >
                     <g>
-                      {this.props.children}
+                      {children}
                     </g>
                 </svg>
             );
