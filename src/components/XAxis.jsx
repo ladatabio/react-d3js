@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Lines } from '../index.js';
+import { Lines, Texts } from '../index.js';
 
 export default class XAxis extends Component {
 
@@ -23,28 +23,45 @@ export default class XAxis extends Component {
             domain = scale.ticks(ticksNumber);
         }
 
-        const ticks = domain.map((d) => {
-            return {
-                x1: scale(d),
-                x2: scale(d),
-                y1: verticalPosition + 10,
+        const ticks = [];
+        const labels = [];
+
+        for (const d of Object.values(domain)) {
+            const x = scale(d);
+            const y = verticalPosition + 10;
+
+            ticks.push({
+                x1: x,
+                x2: x,
+                y1: y,
                 y2: verticalPosition,
                 style,
-            };
-        });
+            });
+
+            labels.push({
+                x,
+                y,
+                dy: '1em',
+                textAnchor: 'middle',
+                value: d,
+                style,
+            });
+        }
 
         return ({
             axis,
             ticks,
+            labels,
         });
     }
 
     _renderElements() {
-        const { axis, ticks } = this._computeAttributes();
+        const { axis, ticks, labels } = this._computeAttributes();
         return (
             <g>
                 <Lines attrs={axis} />
                 <Lines attrs={ticks} />
+                <Texts attrs={labels} />
             </g>
         );
     }
@@ -59,16 +76,12 @@ export default class XAxis extends Component {
 }
 
 XAxis.propTypes = {
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
     ticksNumber: React.PropTypes.number,
-    scale: React.PropTypes.function,
+    scale: React.PropTypes.func.isRequired,
     style: React.PropTypes.object,
 };
 
 XAxis.defaultProps = {
-    width: 600,
-    height: 300,
     ticksNumber: 5,
     style: {
         stroke: 'black',

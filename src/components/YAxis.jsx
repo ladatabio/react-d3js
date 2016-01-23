@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Lines } from '../index.js';
+import { Lines, Texts } from '../index.js';
 
 export default class YAxis extends Component {
 
@@ -23,28 +23,47 @@ export default class YAxis extends Component {
             domain = scale.ticks(ticksNumber);
         }
 
-        const ticks = domain.map((d) => {
-            return {
-                x1: horizontalPosition - 10,
+        const ticks = [];
+        const labels = [];
+
+        for (const d of Object.values(domain)) {
+            const x = horizontalPosition - 10;
+            const y = scale(d);
+
+            ticks.push({
+                x1: x,
                 x2: horizontalPosition,
-                y1: scale(d),
-                y2: scale(d),
+                y1: y,
+                y2: y,
                 style,
-            };
-        });
+            });
+
+            labels.push({
+                x,
+                y,
+                dx: '-0.5em',
+                dy: '0.5em',
+                textLength: '100',
+                textAnchor: 'end',
+                value: d,
+                style,
+            });
+        }
 
         return ({
             axis,
             ticks,
+            labels,
         });
     }
 
     _renderElements() {
-        const { axis, ticks } = this._computeAttributes();
+        const { axis, ticks, labels } = this._computeAttributes();
         return (
             <g>
                 <Lines attrs={axis} />
                 <Lines attrs={ticks} />
+                <Texts attrs={labels} />
             </g>
         );
     }
@@ -59,17 +78,12 @@ export default class YAxis extends Component {
 }
 
 YAxis.propTypes = {
-    data: React.PropTypes.array.isRequired,
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
     ticksNumber: React.PropTypes.number,
-    scale: React.PropTypes.function,
+    scale: React.PropTypes.func.isRequired,
     style: React.PropTypes.object,
 };
 
 YAxis.defaultProps = {
-    width: 600,
-    height: 300,
     ticksNumber: 5,
     style: {
         stroke: 'black',

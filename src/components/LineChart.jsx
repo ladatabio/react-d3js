@@ -20,8 +20,8 @@ export default class LineChart extends Component {
 
     _computeAttributes(props) {
         const { width, height, data, style } = props;
-        this.xScale = d3.scale.ordinal().domain(d3.range(data.length)).rangePoints([50, width]);
-        this.yScale = d3.scale.linear().domain([0, d3.max(data)]).range([20, height - 50]);
+        this.xScale = d3.scale.ordinal().domain(d3.range(data.length)).rangePoints([50, width - 20]);
+        this.yScale = d3.scale.linear().domain([d3.max(data), 0]).range([20, height - 50]);
 
         const valueline = d3.svg.line()
             .x((d, i) => this.xScale(i))
