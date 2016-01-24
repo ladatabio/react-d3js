@@ -9,12 +9,14 @@ export default class LineChart extends Component {
         this.state = {
             animate: true,
             attributes: this._computeAttributes(props),
+            animation: this._computeAnimation(props),
         };
     }
 
     componentWillReceiveProps(nextProps) {
         this.setState({
             attributes: this._computeAttributes(nextProps),
+            animation: this._computeAnimation(nextProps),
         });
     }
 
@@ -23,16 +25,34 @@ export default class LineChart extends Component {
         this.xScale = d3.scale.ordinal().domain(d3.range(data.length)).rangePoints([50, width - 20]);
         this.yScale = d3.scale.linear().domain([d3.max(data), 0]).range([20, height - 50]);
 
-        const valueline = d3.svg.line()
-            .x((d, i) => this.xScale(i))
-            .y((d) => this.yScale(d));
+        const pathFormula = Paths.utils().getFormula((value, index) => this.xScale(index), (value) => this.yScale(value));
+        const totalLength = Paths.utils().getLength(data, (value, index) => this.xScale(index), (value) => this.yScale(value));
 
         return ([
             {
-                d: valueline(data),
+                d: pathFormula(data),
+                strokeDasharray: totalLength + ' ' + totalLength,
                 style,
             },
         ]);
+    }
+
+    _computeAnimation(props) {
+        return {
+            duration: 2000,
+            childrenPropsToAnimate: 'attrs',
+            delay: 50,
+            style: [
+                {
+                    name: 'strokeDashoffset',
+                    from: Paths.utils().getLength(props.data, (value, index) => this.xScale(index), (value, index) => this.yScale(value)),
+                    to: () => {
+                        return 0;
+                    },
+                    ease: 'linear',
+                },
+            ],
+        };
     }
 
     _renderLine() {
@@ -47,18 +67,13 @@ export default class LineChart extends Component {
             <SVGContainer width={width} height={height}>
                 <XAxis style={style} verticalPosition={height - 50} scale={this.xScale}/>
                 <YAxis style={style} horizontalPosition={50} scale={this.yScale}/>
-                {this._renderLine()}
+                <Animate {...this.state.animation} animate={true}>
+                    {this._renderLine()}
+                </Animate>
             </SVGContainer>
         );
     }
 }
-
-LineChart.propTypes = {
-    data: React.PropTypes.array.isRequired,
-    width: React.PropTypes.number,
-    height: React.PropTypes.number,
-    style: React.PropTypes.object,
-};
 
 LineChart.defaultProps = {
     width: 600,

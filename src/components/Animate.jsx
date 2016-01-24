@@ -66,14 +66,18 @@ export default class Animate extends Component {
         return transformations;
     }
 
-    _updateStyle(style, progress) {
-        if (progress >= 1) {
-            for (const [, styleToChange] of this.props.style.entries()) {
-                const { to, name } = styleToChange;
-                style[name] = to;
+    _updateStyle(style, index, progress) {
+        let newStyle = Object.assign({}, style);
+        for (const styleToChange of Object.values(this.props.style)) {
+            const { from = 0, to, name, easeName = 'linear' } = styleToChange;
+
+            if (typeof styleToChange.to === 'string' && progress >= 1) {
+                newStyle[name] = to;
+            } else {
+                newStyle[name] = from + (to(newStyle, index) - from) * ease(easeName)(progress);
             }
         }
-        return style;
+        return newStyle;
     }
 
     _animateElement(elementAttributes, elementIndex) {
@@ -82,7 +86,7 @@ export default class Animate extends Component {
 
         elementAttributes = this._updateAttributes(elementAttributes, elementIndex, progress);
         elementAttributes.transform = this._updateTransformations(progress);
-        elementAttributes.style = this._updateStyle(elementAttributes.style, progress);
+        elementAttributes.style = this._updateStyle(elementAttributes.style, elementIndex, progress);
 
         return elementAttributes;
     }

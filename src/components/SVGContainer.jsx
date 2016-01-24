@@ -41,7 +41,7 @@ SVGContainer.propTypes = {
     height: PropTypes.number,
     style: PropTypes.object,
     engine: PropTypes.string,
-    contentPosition: PropTypes.string,
+    contentPosition: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 };
 
 SVGContainer.defaultProps = {

@@ -8,6 +8,10 @@ export default (InheritedComponent, childrensTagName, attributes) => class exten
             this.attributes = attributes;
         }
 
+        static utils() {
+            return InheritedComponent.prototype;
+        }
+
         _childrensRenderer() {
             const Children = this.childrensTagName;
             let childrens = new Set();
