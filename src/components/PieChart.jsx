@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 import d3 from 'd3';
 
 import { Paths, Animate, SVGContainer } from '../index.js';
 
-export default class PieChart extends React.Component {
+export default class PieChart extends Component {
     constructor(props) {
         super(props);
         this.state = {

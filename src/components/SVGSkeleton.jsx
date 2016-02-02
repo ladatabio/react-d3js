@@ -8,14 +8,14 @@ export default (InheritedComponent, childrensTagName, attributes) => class exten
             this.attributes = attributes;
         }
 
-        static utils() {
-            return InheritedComponent.prototype;
-        }
+        static displayName = childrensTagName + 's';
+
+        static utils = InheritedComponent.prototype;
 
         _childrensRenderer() {
             const Children = this.childrensTagName;
-            let childrens = new Set();
-            for (let [elementToRender, elementAttributes] of this.props.attrs.entries()) {
+            const childrens = new Set();
+            for (const [elementToRender, elementAttributes] of this.props.attrs.entries()) {
                 childrens.add(
                     <Children key={`${Children}${elementToRender}`} {...elementAttributes}>
                         {elementAttributes.value}

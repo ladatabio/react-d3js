@@ -8,6 +8,43 @@ window.requestAnimationFrame = window.requestAnimationFrame ||
 
 export default class Animate extends Component {
 
+    static propTypes = {
+        duration: PropTypes.number,
+        delay: PropTypes.number,
+        childrenPropsToAnimate: PropTypes.string,
+        attributes: PropTypes.arrayOf(
+            PropTypes.shape({
+                name: PropTypes.string.isRequired,
+                start: PropTypes.number,
+                from: PropTypes.oneOfType([
+                    PropTypes.number,
+                    PropTypes.func,
+                ]),
+                to: PropTypes.oneOfType([
+                    PropTypes.number,
+                    PropTypes.func,
+                ]).isRequired,
+                easeName: PropTypes.string,
+            })
+        ),
+        style: PropTypes.arrayOf(
+            PropTypes.shape({
+                name: PropTypes.string.isRequired,
+            })
+        ),
+        transformations: PropTypes.arrayOf(PropTypes.object),
+    };
+
+    static defaultProps = {
+        wait: 0,
+        duration: 800,
+        delay: 0,
+        childrenPropsToAnimate: '',
+        attributes: [],
+        style: [],
+        transformations: [],
+    };
+
     constructor(props) {
         super(props);
         this.state = {
@@ -67,10 +104,9 @@ export default class Animate extends Component {
     }
 
     _updateStyle(style, index, progress) {
-        let newStyle = Object.assign({}, style);
+        const newStyle = Object.assign({}, style);
         for (const styleToChange of Object.values(this.props.style)) {
             const { from = 0, to, name, easeName = 'linear' } = styleToChange;
-
             if (typeof styleToChange.to === 'string' && progress >= 1) {
                 newStyle[name] = to;
             } else {
@@ -83,11 +119,9 @@ export default class Animate extends Component {
     _animateElement(elementAttributes, elementIndex) {
         const { duration, delay } = this.props;
         const progress = (this.state.timer - delay * elementIndex) / duration;
-
         elementAttributes = this._updateAttributes(elementAttributes, elementIndex, progress);
         elementAttributes.transform = this._updateTransformations(progress);
         elementAttributes.style = this._updateStyle(elementAttributes.style, elementIndex, progress);
-
         return elementAttributes;
     }
 
@@ -107,40 +141,3 @@ export default class Animate extends Component {
         return this._renderChildrens();
     }
 }
-
-Animate.propTypes = {
-    duration: PropTypes.number,
-    delay: PropTypes.number,
-    childrenPropsToAnimate: PropTypes.string,
-    attributes: PropTypes.arrayOf(
-        PropTypes.shape({
-            name: PropTypes.string.isRequired,
-            start: PropTypes.number,
-            from: PropTypes.oneOfType([
-                PropTypes.number,
-                PropTypes.func,
-            ]),
-            to: PropTypes.oneOfType([
-                PropTypes.number,
-                PropTypes.func,
-            ]).isRequired,
-            easeName: PropTypes.string,
-        })
-    ),
-    style: PropTypes.arrayOf(
-        PropTypes.shape({
-            name: PropTypes.string.isRequired,
-        })
-    ),
-    transformations: PropTypes.arrayOf(PropTypes.object),
-};
-
-Animate.defaultProps = {
-    wait: 0,
-    duration: 800,
-    delay: 0,
-    childrenPropsToAnimate: '',
-    attributes: [],
-    style: [],
-    transformations: [],
-};
