@@ -6,6 +6,7 @@
   "scripts": {
     "compile": "babel -d lib/ src/",
     "prepublish": "npm run compile",
+    "install": "babel -d lib/ src/",
     "dev": "node initDevServer.js ./examples/Examples.jsx",
     "prod": "webpack"
   },
