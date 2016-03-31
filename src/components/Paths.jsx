@@ -1,4 +1,4 @@
-import SVGSkeleton from './SVGSkeleton.jsx';
+import SVGSkeleton from './SVGSkeleton';
 import React from 'react';
 
 const attributes = {
