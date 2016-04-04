@@ -79,7 +79,9 @@ export class Examples extends React.Component {
                     ]
                 }
             ];
-            this.setState({data: data})
+            this.setState({data: data});
+        } else {
+            this.setState({data: [0, 2, 5, 10, 15]});
         }
         this.setState({chartToDisplay: event.target.value});
     }

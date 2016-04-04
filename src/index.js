@@ -1,3 +1,6 @@
+require('core-js/fn/object/entries');
+require('core-js/fn/object/values');
+
 import Rectangles from './components/Rectangles.jsx';
 import Circles from './components/Circles.jsx';
 import Lines from './components/Lines.jsx';

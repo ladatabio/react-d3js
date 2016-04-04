@@ -1,12 +1,17 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import d3 from 'd3';
 
-import { Paths, Animate, SVGContainer } from '../index.js';
+import {Paths, Animate, SVGContainer} from '../index.js';
 
 export default class PieChart extends Component {
     constructor(props) {
         super(props);
+        this._colors = d3
+            .scale
+            .ordinal()
+            .range(this.props.colors);
         this.state = {
+            pathsAttributes: this._computePathsAttributes(),
             animate: true,
         };
         this.animationProperties = {
@@ -18,8 +23,7 @@ export default class PieChart extends Component {
                     name: 'rotate',
                     from: 0,
                     to: 320,
-                },
-                {
+                }, {
                     name: 'scale',
                     from: 0,
                     to: 1,
@@ -28,92 +32,93 @@ export default class PieChart extends Component {
         };
     }
 
-    componentWillReceiveProps() {
+    componentWillReceiveProps(nextProps) {
+        this._colors = d3
+            .scale
+            .ordinal()
+            .range(nextProps.colors);
         this.setState({
+            pathsAttributes: this._computePathsAttributes(),
             animate: true,
         });
     }
 
-    _computeChildrensLayers(childrensData, layer, outerRadius, innerRadius, startAngle, endAngle) {
-        console.log(childrensData)
-        const colors = d3.scale
-            .ordinal()
-            .range(this.props.colors);
+    _pieBuilder = d3
+        .layout
+        .pie()
+        .value(data => data.value)
 
-        const pie = d3.layout
-            .pie()
-            .value((data) => {
-                return data.value;
-            });
-
-        const parentAngle = Math.abs(endAngle - startAngle);
-        const childrensTotalValue = childrensData.reduce((total, children) => total + children.value, 0);
-        let stepAngle = 0;
-        for (const [pathIndex, pathData] of Object.entries(pie(childrensData))) {
-
-            const arc = d3.svg.arc()
-                    .outerRadius(outerRadius)
-                    .innerRadius(innerRadius);
-
-            pathData.startAngle = startAngle + stepAngle;
-            stepAngle = pathData.value / childrensTotalValue * parentAngle;
-            pathData.endAngle = pathData.startAngle + stepAngle;
-
-            this.pathsData.push({
-                key: layer + '/' + pathIndex + '/' + pathData.data.label + '/' + startAngle,
-                d: arc(pathData),
-                style: {
-                    fill: colors(pathIndex),
-                },
-            });
-
-            if(pathData.data.childrens) {
-                this._computeChildrensLayers(pathData.data.childrens, layer + 1, outerRadius + 25, outerRadius, pathData.startAngle, pathData.endAngle);
+    _changeAllOtherPathsAttributes(keysToKeep, attributeToChange, newAttribute) {
+        const newAttributes = this.state.pathsAttributes.slice();
+        newAttributes.map(element => {
+            if (keysToKeep.indexOf(element.key) === -1) {
+                element[attributeToChange] = Object.assign({}, element[attributeToChange], newAttribute);
             }
-        }
+            return element;
+        });
+        this.setState({pathsAttributes: newAttributes, animate: false});
     }
 
-    _renderPieChart() {
-        const numberOfLayers = 3;//Math.max.apply(null, this.props.data.map(data => data.layer));
+    _computeNewPathsLayerAttributes(layerData, layer, parentsKeys, outerRadius, innerRadius, startAngle, endAngle) {
+        const childrensTotalValue = layerData.reduce((total, children) => total + children.value, 0);
+        const pathsAttributes = [];
+        let stepAngle = 0;
+        for (const [pathIndex, pathData] of Object.entries(this._pieBuilder(layerData))) {
+            const arc = d3.svg
+                .arc()
+                .outerRadius(outerRadius)
+                .innerRadius(innerRadius);
 
-        const colors = d3.scale
-            .ordinal()
-            .range(this.props.colors);
+            if (startAngle !== undefined && endAngle !== undefined) {
+                pathData.startAngle = startAngle + stepAngle;
+                stepAngle = pathData.value / childrensTotalValue * Math.abs(endAngle - startAngle);
+                pathData.endAngle = pathData.startAngle + stepAngle;
+            }
 
-        const pie = d3.layout
-            .pie()
-            .value((data) => {
-                return data.value;
-            });
+            const newParentsKeys = parentsKeys.slice();
+            newParentsKeys.push(pathData.data.label);
 
-        this.pathsData = [];
-        const outerRadius = Math.min(this.props.width, this.props.height) / 3 - numberOfLayers * 25;
-        const innerRadius = this.props.margin;
-        for (const [pathIndex, pathData] of Object.entries(pie(this.props.data))) {
-            const arc = d3.svg.arc()
-                    .outerRadius(outerRadius + 25)
-                    .innerRadius(innerRadius);
-
-            this.pathsData.push({
-                key: 1 + '/' + pathIndex,
+            const pathAttributes = {
+                key: newParentsKeys.join('/'),
                 d: arc(pathData),
                 style: {
-                    fill: colors(pathIndex),
+                    fill: this._colors(pathIndex),
+                    opacity: 1,
                 },
-            });
+            };
 
-            this._computeChildrensLayers(pathData.data.childrens, 1, outerRadius + 50, outerRadius + 25, pathData.startAngle, pathData.endAngle);
+            pathAttributes.onMouseOver = this._changeAllOtherPathsAttributes.bind(this, newParentsKeys, 'style', {opacity: 0.3});
+            pathAttributes.onMouseLeave = this._changeAllOtherPathsAttributes.bind(this, newParentsKeys, 'style', {opacity: 1});
+
+            pathsAttributes.push(pathAttributes);
+
+            if (pathData.data.childrens) {
+                pathsAttributes.push(...this._computeNewPathsLayerAttributes(pathData.data.childrens, layer + 1, newParentsKeys, outerRadius + 25 - 2 * layer, outerRadius, pathData.startAngle, pathData.endAngle));
+            }
         }
 
-        return this.pathsData;
+        return pathsAttributes;
+    }
+
+    _computePathsAttributes() {
+        const numberOfLayers = 3; //Math.max.apply(null, this.props.data.map(data => data.layer));
+        const outerRadius = Math.min(this.props.width, this.props.height) / 3 - numberOfLayers * 25;
+        const innerRadius = this.props.margin;
+        const pathsAttributes = this._computeNewPathsLayerAttributes(this.props.data, 1, [], outerRadius + 25, innerRadius);
+        return pathsAttributes;
+    }
+
+    _renderLegend() {
+
     }
 
     render() {
         return (
             <SVGContainer width={250} height={250} contentPosition="center">
-                    <Animate {...this.animationProperties} animate={this.state.animate}>
-                        <Paths attrs={this._renderPieChart()}/>
-                    </Animate>
+                <Animate {...this.animationProperties} animate={this.state.animate}>
+                    <Paths attrs={this.state.pathsAttributes}/>
+                </Animate>
+                {this._renderLegend()}
             </SVGContainer>
         );
     }
@@ -131,7 +136,11 @@ PieChart.defaultProps = {
     width: 300,
     margin: 20,
     colors: [
-        '#2196F3', '#4CAF50', '#E91E63', '#FF9800', '#4DB6AC',
+        '#2196F3',
+        '#4CAF50',
+        '#E91E63',
+        '#FF9800',
+        '#4DB6AC',
     ],
     colorsDomain: [],
     animation: false,
