@@ -48,7 +48,7 @@ export default class PieChart extends Component {
         .pie()
         .value(data => data.value)
 
-    _changeAllOtherPathsAttributes(keysToKeep, attributeToChange, newAttribute) {
+    _changeAllOtherPathsAttributes(keysToKeep, attributeToChange, newAttribute, legend) {
         const newAttributes = this.state.pathsAttributes.slice();
         newAttributes.map(element => {
             if (keysToKeep.indexOf(element.key) === -1) {
@@ -56,7 +56,11 @@ export default class PieChart extends Component {
             }
             return element;
         });
-        this.setState({pathsAttributes: newAttributes, animate: false});
+        this.setState({
+            pathsAttributes: newAttributes,
+            animate: false,
+            legend
+        });
     }
 
     _computeNewPathsLayerAttributes(layerData, layer, parentsKeys, outerRadius, innerRadius, startAngle, endAngle) {
@@ -75,11 +79,8 @@ export default class PieChart extends Component {
                 pathData.endAngle = pathData.startAngle + stepAngle;
             }
 
-            const newParentsKeys = parentsKeys.slice();
-            newParentsKeys.push(pathData.data.label);
-
             const pathAttributes = {
-                key: newParentsKeys.join('/'),
+                key: `${parentsKeys.join('/')}/${pathData.data.label}`,
                 d: arc(pathData),
                 style: {
                     fill: this._colors(pathIndex),
@@ -87,7 +88,10 @@ export default class PieChart extends Component {
                 },
             };
 
-            pathAttributes.onMouseOver = this._changeAllOtherPathsAttributes.bind(this, newParentsKeys, 'style', {opacity: 0.3});
+            const newParentsKeys = parentsKeys.slice();
+            newParentsKeys.push(pathAttributes.key);
+
+            pathAttributes.onMouseOver = this._changeAllOtherPathsAttributes.bind(this, newParentsKeys, 'style', {opacity: 0.3}, newParentsKeys);
             pathAttributes.onMouseLeave = this._changeAllOtherPathsAttributes.bind(this, newParentsKeys, 'style', {opacity: 1});
 
             pathsAttributes.push(pathAttributes);
@@ -109,7 +113,20 @@ export default class PieChart extends Component {
     }
 
     _renderLegend() {
-
+        if (this.state.legend) {
+            let legendData = this.props.data;
+            return legendData.map((elementToDisplay, index) => {
+                legendData.find(legendData => legendData.label === elementToDisplay)
+                return (
+                    <g transform={`translate(${78 * 0},0)`}>
+                        <polygon style="fill: rgb(86, 135, 209);" points="0,0 75,0 85,15 75,30 0,30"></polygon>
+                        <text text-anchor="middle" dy="0.35em" y="15" x="42.5">
+                            {elementToDisplay + ':' +legendData.find(legendData => legendData.label === elementToDisplay)}
+                        </text>
+                    </g>
+                )
+            })
+        }
     }
 
     render() {
