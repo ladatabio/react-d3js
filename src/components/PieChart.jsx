@@ -34,31 +34,78 @@ export default class PieChart extends Component {
         });
     }
 
-    _renderPieChart() {
+    _computeChildrensLayers(childrensData, layer, outerRadius, innerRadius, startAngle, endAngle) {
+        console.log(childrensData)
         const colors = d3.scale
             .ordinal()
             .range(this.props.colors);
 
         const pie = d3.layout
             .pie()
-            .value((d) => {
-                return d;
+            .value((data) => {
+                return data.value;
             });
 
-        const arc = d3.svg
-                .arc()
-                .outerRadius(Math.min(this.props.width, this.props.height) / 3)
-                .innerRadius(this.props.margin);
+        const parentAngle = Math.abs(endAngle - startAngle);
+        const childrensTotalValue = childrensData.reduce((total, children) => total + children.value, 0);
+        let stepAngle = 0;
+        for (const [pathIndex, pathData] of Object.entries(pie(childrensData))) {
 
-        return pie(this.props.data).map((d, i) => {
-            return {
-                key: i,
-                d: arc(d),
+            const arc = d3.svg.arc()
+                    .outerRadius(outerRadius)
+                    .innerRadius(innerRadius);
+
+            pathData.startAngle = startAngle + stepAngle;
+            stepAngle = pathData.value / childrensTotalValue * parentAngle;
+            pathData.endAngle = pathData.startAngle + stepAngle;
+
+            this.pathsData.push({
+                key: layer + '/' + pathIndex + '/' + pathData.data.label + '/' + startAngle,
+                d: arc(pathData),
                 style: {
-                    fill: colors(i),
+                    fill: colors(pathIndex),
                 },
-            };
-        });
+            });
+
+            if(pathData.data.childrens) {
+                this._computeChildrensLayers(pathData.data.childrens, layer + 1, outerRadius + 25, outerRadius, pathData.startAngle, pathData.endAngle);
+            }
+        }
+    }
+
+    _renderPieChart() {
+        const numberOfLayers = 3;//Math.max.apply(null, this.props.data.map(data => data.layer));
+
+        const colors = d3.scale
+            .ordinal()
+            .range(this.props.colors);
+
+        const pie = d3.layout
+            .pie()
+            .value((data) => {
+                return data.value;
+            });
+
+        this.pathsData = [];
+        const outerRadius = Math.min(this.props.width, this.props.height) / 3 - numberOfLayers * 25;
+        const innerRadius = this.props.margin;
+        for (const [pathIndex, pathData] of Object.entries(pie(this.props.data))) {
+            const arc = d3.svg.arc()
+                    .outerRadius(outerRadius + 25)
+                    .innerRadius(innerRadius);
+
+            this.pathsData.push({
+                key: 1 + '/' + pathIndex,
+                d: arc(pathData),
+                style: {
+                    fill: colors(pathIndex),
+                },
+            });
+
+            this._computeChildrensLayers(pathData.data.childrens, 1, outerRadius + 50, outerRadius + 25, pathData.startAngle, pathData.endAngle);
+        }
+
+        return this.pathsData;
     }
 
     render() {

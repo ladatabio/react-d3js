@@ -1,21 +1,22 @@
+
 function isFlatArray(data) {
-    return (Array.isArray(data) && typeof data[0] === 'number');
+    return (Array.isArray(data) && typeof data[0] !== 'object');
 }
 
 function isNestedArray(data) {
     return (Array.isArray(data) && Array.isArray(data[0]));
 }
 
-function isCollection(data) {
+function isCollectionOfDict(data) {
     return (Array.isArray(data) && typeof data[0] === 'object');
 }
 
-function isJSON(data) {
+function isDict(data) {
     return (!Array.isArray(data) && typeof data === 'object');
 }
 
 
-export default function (data) {
+export default function  (data) {
     let newData = [];
     switch (true) {
         case (isFlatArray(data)):
