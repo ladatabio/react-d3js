@@ -13,6 +13,7 @@ export default class PieChart extends Component {
         this.state = {
             pathsAttributes: this._computePathsAttributes(),
             animate: true,
+            legend: [],
         };
         this.animationProperties = {
             duration: 200,
@@ -48,7 +49,7 @@ export default class PieChart extends Component {
         .pie()
         .value(data => data.value)
 
-    _changeAllOtherPathsAttributes(keysToKeep, attributeToChange, newAttribute, legend) {
+    _changeAllOtherPathsAttributes(keysToKeep, attributeToChange, newAttribute, legend = []) {
         const newAttributes = this.state.pathsAttributes.slice();
         newAttributes.map(element => {
             if (keysToKeep.indexOf(element.key) === -1) {
@@ -59,11 +60,11 @@ export default class PieChart extends Component {
         this.setState({
             pathsAttributes: newAttributes,
             animate: false,
-            legend
+            legend,
         });
     }
 
-    _computeNewPathsLayerAttributes(layerData, layer, parentsKeys, outerRadius, innerRadius, startAngle, endAngle) {
+    _computeNewPathsLayerAttributes(layerData, layer, parentsKeys = [], outerRadius, innerRadius, startAngle, endAngle) {
         const childrensTotalValue = layerData.reduce((total, children) => total + children.value, 0);
         const pathsAttributes = [];
         let stepAngle = 0;
@@ -80,7 +81,7 @@ export default class PieChart extends Component {
             }
 
             const pathAttributes = {
-                key: `${parentsKeys.join('/')}/${pathData.data.label}`,
+                key: `${parentsKeys.length > 0 ? parentsKeys[parentsKeys.length - 1] : ''}/${pathData.data.label}`,
                 d: arc(pathData),
                 style: {
                     fill: this._colors(pathIndex),
@@ -91,8 +92,8 @@ export default class PieChart extends Component {
             const newParentsKeys = parentsKeys.slice();
             newParentsKeys.push(pathAttributes.key);
 
-            pathAttributes.onMouseOver = this._changeAllOtherPathsAttributes.bind(this, newParentsKeys, 'style', {opacity: 0.3}, newParentsKeys);
-            pathAttributes.onMouseLeave = this._changeAllOtherPathsAttributes.bind(this, newParentsKeys, 'style', {opacity: 1});
+            pathAttributes.onMouseOver = this._changeAllOtherPathsAttributes.bind(this, newParentsKeys, 'style', {opacity: 0.3}, pathAttributes.key.split('/').filter(Boolean));
+            pathAttributes.onMouseLeave = this._changeAllOtherPathsAttributes.bind(this, newParentsKeys, 'style', {opacity: 1}, []);
 
             pathsAttributes.push(pathAttributes);
 
@@ -113,30 +114,52 @@ export default class PieChart extends Component {
     }
 
     _renderLegend() {
-        if (this.state.legend) {
-            let legendData = this.props.data;
-            return legendData.map((elementToDisplay, index) => {
-                legendData.find(legendData => legendData.label === elementToDisplay)
-                return (
-                    <g transform={`translate(${78 * 0},0)`}>
-                        <polygon style="fill: rgb(86, 135, 209);" points="0,0 75,0 85,15 75,30 0,30"></polygon>
-                        <text text-anchor="middle" dy="0.35em" y="15" x="42.5">
-                            {elementToDisplay + ':' +legendData.find(legendData => legendData.label === elementToDisplay)}
+        const legend = [];
+        if (this.state.legend.length) {
+            const legendElements = this.state.legend;
+            let data = this.props.data;
+            let key = '';
+            let valueToDisplay;
+            for (const [index, legendElement] of Object.entries(legendElements)) {
+                const targetedData = data.find(dataElement => dataElement.label === legendElement);
+                valueToDisplay = targetedData.value;
+                key = key + `/${legendElement}`;
+                const targetedColor = this.state.pathsAttributes.find(dataElement => dataElement.key === key).style.fill;
+                legend.push(
+                    <g transform={`translate(${76 * index}, 0)`}>
+                        <polygon points="10,15 0,0 75,0 85,15 75,30 0,30" style={{fill: targetedColor}} />
+                        <text textAnchor="middle" dy="0.35em" y="1.1em" x="42.5" style={{fontFamily: 'Roboto', fontSize: '0.8em'}}>
+                            {legendElement}
                         </text>
                     </g>
-                )
-            })
+                );
+                if (targetedData.childrens) {
+                    data = targetedData.childrens;
+                }
+            }
+            legend.push(
+                <g transform={`translate(${76 * legendElements.length}, 0)`}>
+                    <text textAnchor="start" dy="0.35em" y="1.1em" x="10" style={{fontFamily: 'Roboto', fontSize: '0.8em'}}>
+                        {`${this.props.legend.prefix} ${valueToDisplay} ${this.props.legend.suffix}`}
+                    </text>
+                </g>
+            );
         }
+        return legend;
     }
 
     render() {
         return (
-            <SVGContainer width={250} height={250} contentPosition="center">
-                <Animate {...this.animationProperties} animate={this.state.animate}>
-                    <Paths attrs={this.state.pathsAttributes}/>
-                </Animate>
-                {this._renderLegend()}
-            </SVGContainer>
+            <div>
+                <SVGContainer width={400} height={250} contentPosition="center">
+                    <Animate {...this.animationProperties} animate={this.state.animate}>
+                        <Paths attrs={this.state.pathsAttributes}/>
+                    </Animate>
+                </SVGContainer>
+                <SVGContainer width={400} height={50}>
+                    {this._renderLegend()}
+                </SVGContainer>
+            </div>
         );
     }
 }
@@ -161,4 +184,8 @@ PieChart.defaultProps = {
     ],
     colorsDomain: [],
     animation: false,
+    legend: {
+        prefix: '',
+        suffix: '',
+    },
 };

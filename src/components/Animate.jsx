@@ -1,4 +1,4 @@
-import { Component, PropTypes, cloneElement } from 'react';
+import { findDOMNode, Component, PropTypes, cloneElement } from 'react';
 import { ease } from 'd3';
 
 window.requestAnimationFrame = window.requestAnimationFrame ||
@@ -65,6 +65,16 @@ export default class Animate extends Component {
         }
     }
 
+    _isMounted() {
+        try {
+            findDOMNode(this);
+            return true;
+        } catch (e) {
+          // Error: Invariant Violation: Component (with keys: props,context,state,refs,_reactInternalInstance) contains `render` method but is not mounted in the DOM
+            return false;
+        }
+    }
+
     _initiateAnimations() {
         this.setState({ timer: 0 });
         this.startTime = Date.now();
@@ -72,7 +82,7 @@ export default class Animate extends Component {
     }
 
     _tick() {
-        if (this._canContinueAnimation()) {
+        if (this._canContinueAnimation() && this._isMounted()) {
             this.setState({
                 timer: Date.now() - this.startTime,
             });
