@@ -152,7 +152,7 @@ export default class PieChart extends Component {
         return (
             <div>
                 <SVGContainer width={400} height={250} contentPosition="center">
-                    <Animate {...this.animationProperties} animate={this.state.animate}>
+                    <Animate {...this.animationProperties} animate={this.state.animate ? this.props.animate : false}>
                         <Paths attrs={this.state.pathsAttributes}/>
                     </Animate>
                 </SVGContainer>
@@ -188,4 +188,5 @@ PieChart.defaultProps = {
         prefix: '',
         suffix: '',
     },
+    animate: true,
 };

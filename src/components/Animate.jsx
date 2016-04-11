@@ -92,7 +92,7 @@ export default class Animate extends Component {
 
     _canContinueAnimation() {
         const { delay, children, childrenPropsToAnimate, duration } = this.props;
-        return this.state.timer <= (duration + delay * (children.props[childrenPropsToAnimate].length + 1));
+        return this.props.animate && this.state.timer <= (duration + delay * (children.props[childrenPropsToAnimate].length + 1));
     }
 
     _updateAttributes(attributes, index, progress) {
@@ -126,9 +126,9 @@ export default class Animate extends Component {
         return newStyle;
     }
 
-    _animateElement(elementAttributes, elementIndex) {
+    _animateElement(elementAttributes, elementIndex, forceToEnd = false) {
         const { duration, delay } = this.props;
-        const progress = (this.state.timer - delay * elementIndex) / duration;
+        const progress = forceToEnd ? duration : (this.state.timer - delay * elementIndex) / duration;
         elementAttributes = this._updateAttributes(elementAttributes, elementIndex, progress);
         elementAttributes.transform = this._updateTransformations(progress);
         elementAttributes.style = this._updateStyle(elementAttributes.style, elementIndex, progress);
@@ -142,9 +142,12 @@ export default class Animate extends Component {
             for (const [elementToAnimate, elementAttributes] of Object.entries(children.props[childrenPropsToAnimate])) {
                 children.props[childrenPropsToAnimate][elementToAnimate] = this._animateElement(elementAttributes, elementToAnimate);
             }
-            return cloneElement(children);
+        } else {
+            for (const [elementToAnimate, elementAttributes] of Object.entries(children.props[childrenPropsToAnimate])) {
+                children.props[childrenPropsToAnimate][elementToAnimate] = this._animateElement(elementAttributes, elementToAnimate, true);
+            }
         }
-        return children;
+        return cloneElement(children);
     }
 
     render() {
