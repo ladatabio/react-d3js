@@ -1,16 +1,21 @@
-import Rectangles from './components/Rectangles';
-import Circles from './components/Circles';
-import Lines from './components/Lines';
-import Texts from './components/Texts';
-import Paths from './components/Paths';
-import Ellipses from './components/Ellipses';
-import Animate from './components/Animate';
-import SVGContainer from './components/SVGContainer';
-import XAxis from './components/XAxis';
-import YAxis from './components/YAxis';
-import BarChart from './components/BarChart';
-import PieChart from './components/PieChart';
-import LineChart from './components/LineChart';
+
+require('core-js/fn/object/entries');
+require('core-js/fn/object/values');
+
+import Rectangles from './components/Rectangles.jsx';
+import Circles from './components/Circles.jsx';
+import Lines from './components/Lines.jsx';
+import Texts from './components/Texts.jsx';
+import Paths from './components/Paths.jsx';
+import Ellipses from './components/Ellipses.jsx';
+import Animate from './components/Animate.jsx';
+import SVGContainer from './components/SVGContainer.jsx';
+import DevTools from './components/DevTools.jsx';
+import XAxis from './components/XAxis.jsx';
+import YAxis from './components/YAxis.jsx';
+import BarChart from './components/BarChart.jsx';
+import PieChart from './components/PieChart.jsx';
+import LineChart from './components/LineChart.jsx';
 
 
-export { Rectangles, Circles, Lines, Texts, Paths, Ellipses, Animate, SVGContainer, XAxis, YAxis, BarChart, PieChart, LineChart };
+export { Rectangles, Circles, Lines, Texts, Paths, Ellipses, Animate, SVGContainer, DevTools, XAxis, YAxis, BarChart, PieChart, LineChart };

@@ -4,7 +4,22 @@ import { Lines, Texts } from '../index.js';
 
 export default class YAxis extends Component {
 
-    _computeAttributes() {
+    static propTypes = {
+        ticksNumber: React.PropTypes.number,
+        scale: React.PropTypes.func.isRequired,
+        style: React.PropTypes.object,
+    };
+
+    static defaultProps = {
+        ticksNumber: 5,
+        style: {
+            stroke: 'black',
+            strokeWidth: 2,
+            fill: 'none',
+        },
+    };
+
+    _buildAttributes() {
         const { scale, horizontalPosition, style, ticksNumber } = this.props;
 
         let domain = scale.domain();
@@ -58,7 +73,7 @@ export default class YAxis extends Component {
     }
 
     _renderElements() {
-        const { axis, ticks, labels } = this._computeAttributes();
+        const { axis, ticks, labels } = this._buildAttributes();
         return (
             <g>
                 <Lines attrs={axis} />
@@ -76,18 +91,3 @@ export default class YAxis extends Component {
         );
     }
 }
-
-YAxis.propTypes = {
-    ticksNumber: React.PropTypes.number,
-    scale: React.PropTypes.func.isRequired,
-    style: React.PropTypes.object,
-};
-
-YAxis.defaultProps = {
-    ticksNumber: 5,
-    style: {
-        stroke: 'black',
-        strokeWidth: 2,
-        fill: 'none',
-    },
-};

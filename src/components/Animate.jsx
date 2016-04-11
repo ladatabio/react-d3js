@@ -1,4 +1,4 @@
-import { Component, PropTypes, cloneElement } from 'react';
+import { findDOMNode, Component, PropTypes, cloneElement } from 'react';
 import { ease } from 'd3';
 
 window.requestAnimationFrame = window.requestAnimationFrame ||
@@ -7,6 +7,43 @@ window.requestAnimationFrame = window.requestAnimationFrame ||
    window.msRequestAnimationFrame;
 
 export default class Animate extends Component {
+
+    static propTypes = {
+        duration: PropTypes.number,
+        delay: PropTypes.number,
+        childrenPropsToAnimate: PropTypes.string,
+        attributes: PropTypes.arrayOf(
+            PropTypes.shape({
+                name: PropTypes.string.isRequired,
+                start: PropTypes.number,
+                from: PropTypes.oneOfType([
+                    PropTypes.number,
+                    PropTypes.func,
+                ]),
+                to: PropTypes.oneOfType([
+                    PropTypes.number,
+                    PropTypes.func,
+                ]).isRequired,
+                easeName: PropTypes.string,
+            })
+        ),
+        style: PropTypes.arrayOf(
+            PropTypes.shape({
+                name: PropTypes.string.isRequired,
+            })
+        ),
+        transformations: PropTypes.arrayOf(PropTypes.object),
+    };
+
+    static defaultProps = {
+        wait: 0,
+        duration: 800,
+        delay: 0,
+        childrenPropsToAnimate: '',
+        attributes: [],
+        style: [],
+        transformations: [],
+    };
 
     constructor(props) {
         super(props);
@@ -28,6 +65,16 @@ export default class Animate extends Component {
         }
     }
 
+    _isMounted() {
+        try {
+            findDOMNode(this);
+            return true;
+        } catch (e) {
+          // Error: Invariant Violation: Component (with keys: props,context,state,refs,_reactInternalInstance) contains `render` method but is not mounted in the DOM
+            return false;
+        }
+    }
+
     _initiateAnimations() {
         this.setState({ timer: 0 });
         this.startTime = Date.now();
@@ -35,7 +82,7 @@ export default class Animate extends Component {
     }
 
     _tick() {
-        if (this._canContinueAnimation()) {
+        if (this._canContinueAnimation() && this._isMounted()) {
             this.setState({
                 timer: Date.now() - this.startTime,
             });
@@ -45,7 +92,7 @@ export default class Animate extends Component {
 
     _canContinueAnimation() {
         const { delay, children, childrenPropsToAnimate, duration } = this.props;
-        return this.state.timer <= (duration + delay * (children.props[childrenPropsToAnimate].length + 1));
+        return this.props.animate && this.state.timer <= (duration + delay * (children.props[childrenPropsToAnimate].length + 1));
     }
 
     _updateAttributes(attributes, index, progress) {
@@ -66,24 +113,25 @@ export default class Animate extends Component {
         return transformations;
     }
 
-    _updateStyle(style, progress) {
-        if (progress >= 1) {
-            for (const [, styleToChange] of this.props.style.entries()) {
-                const { to, name } = styleToChange;
-                style[name] = to;
+    _updateStyle(style, index, progress) {
+        const newStyle = Object.assign({}, style);
+        for (const styleToChange of Object.values(this.props.style)) {
+            const { from = 0, to, name, easeName = 'linear' } = styleToChange;
+            if (typeof styleToChange.to === 'string' && progress >= 1) {
+                newStyle[name] = to;
+            } else {
+                newStyle[name] = from + (to(newStyle, index) - from) * ease(easeName)(progress);
             }
         }
-        return style;
+        return newStyle;
     }
 
-    _animateElement(elementAttributes, elementIndex) {
+    _animateElement(elementAttributes, elementIndex, forceToEnd = false) {
         const { duration, delay } = this.props;
-        const progress = (this.state.timer - delay * elementIndex) / duration;
-
+        const progress = forceToEnd ? duration : (this.state.timer - delay * elementIndex) / duration;
         elementAttributes = this._updateAttributes(elementAttributes, elementIndex, progress);
         elementAttributes.transform = this._updateTransformations(progress);
-        elementAttributes.style = this._updateStyle(elementAttributes.style, progress);
-
+        elementAttributes.style = this._updateStyle(elementAttributes.style, elementIndex, progress);
         return elementAttributes;
     }
 
@@ -94,49 +142,15 @@ export default class Animate extends Component {
             for (const [elementToAnimate, elementAttributes] of Object.entries(children.props[childrenPropsToAnimate])) {
                 children.props[childrenPropsToAnimate][elementToAnimate] = this._animateElement(elementAttributes, elementToAnimate);
             }
-            return cloneElement(children);
+        } else {
+            for (const [elementToAnimate, elementAttributes] of Object.entries(children.props[childrenPropsToAnimate])) {
+                children.props[childrenPropsToAnimate][elementToAnimate] = this._animateElement(elementAttributes, elementToAnimate, true);
+            }
         }
-        return children;
+        return cloneElement(children);
     }
 
     render() {
         return this._renderChildrens();
     }
 }
-
-Animate.propTypes = {
-    duration: PropTypes.number,
-    delay: PropTypes.number,
-    childrenPropsToAnimate: PropTypes.string,
-    attributes: PropTypes.arrayOf(
-        PropTypes.shape({
-            name: PropTypes.string.isRequired,
-            start: PropTypes.number,
-            from: PropTypes.oneOfType([
-                PropTypes.number,
-                PropTypes.func,
-            ]),
-            to: PropTypes.oneOfType([
-                PropTypes.number,
-                PropTypes.func,
-            ]).isRequired,
-            easeName: PropTypes.string,
-        })
-    ),
-    style: PropTypes.arrayOf(
-        PropTypes.shape({
-            name: PropTypes.string.isRequired,
-        })
-    ),
-    transformations: PropTypes.arrayOf(PropTypes.object),
-};
-
-Animate.defaultProps = {
-    wait: 0,
-    duration: 800,
-    delay: 0,
-    childrenPropsToAnimate: '',
-    attributes: [],
-    style: [],
-    transformations: [],
-};
