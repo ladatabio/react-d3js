@@ -1,6 +1,7 @@
 
 require('core-js/fn/object/entries');
 require('core-js/fn/object/values');
+require('core-js/fn/object/keys');
 
 import Rectangles from './components/Rectangles';
 import Circles from './components/Circles';
