@@ -25,7 +25,7 @@ Paths.prototype = {
             .y(y);
     },
     getLength(data, x, y) {
-        const coordinates = data.map((value, index) => ({ x: x(value, index), y: y(value, index) }));
+        const coordinates = Object.entries(data).map((value, index) => ({ x: x(value, index), y: y(value, index) }));
         let totalLength = 0;
         for (const index of Object.keys(coordinates)) {
             if (index > 0) {
