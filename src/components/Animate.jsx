@@ -1,4 +1,5 @@
-import { findDOMNode, Component, PropTypes, cloneElement } from 'react';
+import { Component, PropTypes, cloneElement } from 'react';
+import { findDOMNode } from 'react-dom';
 import { ease } from 'd3';
 
 window.requestAnimationFrame = window.requestAnimationFrame ||
